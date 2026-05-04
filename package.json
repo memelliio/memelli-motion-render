@@ -1,0 +1,10 @@
+{
+  "name": "memelli-motion-render",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": { "start": "node src/index.js" },
+  "dependencies": {
+    "fastify": "^5.0.0",
+    "pg": "^8.13.0"
+  }
+}
