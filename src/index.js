@@ -10,10 +10,10 @@ async function main() {
   const helpers = {
     client,
     schema: SCHEMA,
-    async markStatus(name, status, errorText = '') {
+    async markStatus(name, status, errorText) {
       await client.query(
-        'UPDATE ' + SCHEMA + '.nodes SET status=, last_loaded_at=now(), error_text=, load_count=load_count+1 WHERE name=',
-        [status, errorText, name]
+        'UPDATE ' + SCHEMA + '.nodes SET status=$1, last_loaded_at=now(), error_text=$2, load_count=load_count+1 WHERE name=$3',
+        [status, errorText || '', name]
       );
     },
   };
@@ -21,10 +21,10 @@ async function main() {
   const app = fastify();
   app.__schema = SCHEMA;
 
-  let res = await client.query(
-    'SELECT code_text FROM ' + SCHEMA + '.nodes WHERE name='_shell_orchestrator' AND active=true ORDER BY version DESC LIMIT 1'
+  const res = await client.query(
+    "SELECT code_text FROM " + SCHEMA + ".nodes WHERE name='_shell_orchestrator' AND active=true ORDER BY version DESC LIMIT 1"
   );
-  const code = res.rows[0]?.code_text;
+  const code = res.rows[0] && res.rows[0].code_text;
   if (!code) throw new Error('No orchestrator found');
   await helpers.markStatus('_shell_orchestrator', 'deploying');
   const mod = { exports: {} };
