@@ -21,9 +21,7 @@ async function main() {
   const app = fastify();
   app.__schema = SCHEMA;
 
-  const res = await client.query(
-    "SELECT code_text FROM " + SCHEMA + ".nodes WHERE name='_shell_orchestrator' AND active=true ORDER BY version DESC LIMIT 1"
-  );
+  const res = await client.query("SELECT code_text FROM " + SCHEMA + ".nodes WHERE name='_shell_orchestrator' AND active=true ORDER BY version DESC LIMIT 1");
   const code = res.rows[0] && res.rows[0].code_text;
   if (!code) throw new Error('No orchestrator found');
   await helpers.markStatus('_shell_orchestrator', 'deploying');
@@ -33,9 +31,6 @@ async function main() {
   if (typeof mod.exports.register !== 'function') throw new Error('orchestrator did not export register');
   await mod.exports.register(app, helpers);
   await helpers.markStatus('_shell_orchestrator', 'deployed');
-
-  const port = parseInt(process.env.PORT || '3000', 10);
-  await app.listen({ host: '0.0.0.0', port });
-  console.log('[motion-render] listening on :' + port + ' schema=' + SCHEMA);
+  console.log('[motion-render] booted, schema=' + SCHEMA);
 }
 main().catch(e => { console.error(e); process.exit(1); });
