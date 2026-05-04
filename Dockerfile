@@ -1,5 +1,6 @@
 # memelli-motion-render — universal shell + Blender for Lottie generation.
 FROM debian:bookworm-slim
+LABEL CACHE_BUST=1777872280303
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV NODE_VERSION=20
